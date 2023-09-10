@@ -1,4 +1,5 @@
 #include "header.h"
+
 /**
  * parse_user_input - Parse user input into arguments.
  *
@@ -23,12 +24,11 @@ int parse_user_input(const char *input, char **args, int max_args)
 
 	return (1);
 }
+
 /**
  * execute_command - Execute a command with its arguments.
  *
  * @args: Array of command arguments, where the first element is the command.
- *
- * Return: None
  */
 void execute_command(char *args[])
 {
@@ -41,7 +41,7 @@ void execute_command(char *args[])
 		if (execvp(args[0], args) == -1)
 		{
 			perror(args[0]);
-			exit(1);
+			exit(127); /* Exit with the same error code as sh */
 		}
 	}
 	else if (pid > 0)
@@ -51,13 +51,12 @@ void execute_command(char *args[])
 	else
 	{
 		perror("fork failed");
+		exit(1); /* Exit with an error code */
 	}
 }
 
 /**
  * execute_shell - Execute the interactive shell.
- *
- * Return: None
  */
 void execute_shell(void)
 {
@@ -94,13 +93,11 @@ void execute_shell(void)
 		{
 			execute_command(args);
 		}
-		free(cmd); /* Free the allocated memory */
 	}
 }
+
 /**
  * execute_env - Execute the "env" built-in command.
- *
- * Return: None
  */
 void execute_env(void)
 {

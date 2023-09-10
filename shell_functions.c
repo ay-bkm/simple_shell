@@ -9,48 +9,25 @@
  */
 int get_user_input(char **cmd)
 {
-    size_t bufsize = 0;
+	size_t len = 0;
+	ssize_t nread;
 
-    if (getline(cmd, &bufsize, stdin) == -1)
-    {
-        if (feof(stdin))
-        {
-            printf("\n");
-            exit(0);
-        }
-        else
-        {
-            perror("getline failed");
-            fprintf(stderr, "Error: Failed to read user input.\n");
-            exit(1);
-        }
-    }
-    (*cmd)[strcspn(*cmd, "\n")] = '\0';
-    return (1);
-}
-
-/**
- * parse_input - Parse the input command into arguments.
- *
- * @input: The input command string to parse.
- * @args: An array to store the parsed arguments.
- * @max_args: The maximum number of arguments to store in 'args'.
- *
- * Return: 1 if successful, 0 on failure.
- */
-int parse_input(char *input, char **args, int max_args)
-{
-	char *token = strtok(input, " ");
-	int i = 0;
-
-	while (token != NULL && i < max_args - 1)
+	nread = getline(cmd, &len, stdin);
+	if (nread == -1)
 	{
-		args[i++] = token;
-		token = strtok(NULL, " ");
+		if (feof(stdin))
+		{
+			printf("\n");
+			exit(0);
+		}
+		else
+		{
+			perror("getline failed");
+			fprintf(stderr, "Error: Failed to read user input.\n");
+			exit(1);
+		}
 	}
-
-	args[i] = NULL;
-
+	(*cmd)[nread - 1] = '\0'; /* Remove newline character */
 	return (1);
 }
 
