@@ -17,7 +17,7 @@ int get_user_input(char **cmd)
 	{
 		if (feof(stdin))
 		{
-			printf("\n");
+			write(1, "\n", 1);
 			exit(0);
 		}
 		else
@@ -54,6 +54,6 @@ void handle_parse_user_input_error(void)
  */
 void handle_exit_command(void)
 {
-	printf("Exiting the shell...\n");
+	write(STDOUT_FILENO, "Exiting the shell...\n", 22);
 	exit(0);
 }

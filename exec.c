@@ -34,14 +34,23 @@ void execute_command(char *args[])
 {
 	pid_t pid;
 	int status;
+	char *command;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execvp(args[0], args) == -1)
+		command = get_command(args[0]);
+		if (command)
 		{
-			perror(args[0]);
-			exit(127); /* Exit with the same error code as sh */
+			execve(command, args, environ);
+		}
+		else
+		{
+			if (execve(args[0], args, environ) == -1)
+			{
+				perror(args[0]);
+				exit(127); /* Exit with the same error code as sh */
+			}
 		}
 	}
 	else if (pid > 0)
@@ -65,7 +74,7 @@ void execute_shell(void)
 
 	while (1)
 	{
-		printf("#cisfun$ ");
+		write(STDOUT_FILENO, "#cisfun$ ", 10);
 		if (!get_user_input(&cmd))
 		{
 			handle_get_user_input_error();
@@ -102,10 +111,11 @@ void execute_shell(void)
 void execute_env(void)
 {
 	char **env = environ;
+	int i = 0;
 
-	while (*env != NULL)
+	while (env[i])
 	{
-		printf("%s\n", *env);
-		env++;
+		write(STDOUT_FILENO, env[i], strlen(env[i]));
+		i++;
 	}
 }
