@@ -2,14 +2,12 @@
 /**
  * _getenviron - search inside environ
  * @name: the name to search
- * Return: the environ or NUll
-*/
+ * Return: the environ or NULL
+ */
 char *_getenviron(char *name)
 {
 	char **env = environ;
-
 	int i = 0;
-
 	char *token = NULL;
 
 	while (env[i])
@@ -21,17 +19,16 @@ char *_getenviron(char *name)
 	}
 	return (NULL);
 }
+
 /**
- * get_command - search inside path the file
+ * get_command - search inside path for the file
  * @command: the command
  * Return: command or NULL if failed
-*/
+ */
 char *get_command(char *command)
 {
 	char *path = _getenviron("PATH");
-
 	char *full_com;
-
 	char *token;
 
 	token = strtok(path, ":");
