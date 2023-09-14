@@ -3,51 +3,27 @@
 /**
  * main - Entry point for the simple shell program.
  *
- * @argc: The number of command-line arguments.
- * @argv: An array of strings containing the command-line arguments.
+ * @argc: The number of command-line arguments (unused).
+ * @argv: An array of strings containing the command-line arguments (unused).
  *
- * Return: 0 on success, or an error code on failure.
+ * Return: Always returns 0 to indicate successful execution.
  */
 int main(int argc, char **argv)
 {
+	int check_interactive;
 	/* Suppress unused parameter warnings */
 	(void)argc;
 	(void)argv;
-	/* Check if interactive mode */
-	if (isatty(STDIN_FILENO))
-	{
-		execute_shell(); /* Interactive mode */
-	} else
-	{
-		/* Non-interactive mode */
-		char *args[MAX_ARG_LEN], *cmd = NULL;
-		int result;
 
-		while (1) /* Read commands from redirected input or script */
-		{
-			result = get_user_input(&cmd);
-			if (result == 0) /* Check for end of input */
-				break;
-			if (!parse_user_input(cmd, args, MAX_ARG_LEN))
-			{
-				handle_parse_user_input_error();
-				continue;
-			}
-
-			if (args[0] == NULL)
-				continue;
-			if (strcmp(args[0], "exit") == 0)
-			{
-				handle_exit_command();
-			} else if (strcmp(args[0], "env") == 0)
-			{
-				execute_env();
-			} else
-			{
-				execute_command(args);
-			}
-		}
+	check_interactive = isatty(STDIN_FILENO);
+	/* Execute the interactive shell */
+	if (check_interactive == 1)
+	{
+		execute_shell();
 	}
-
+	else
+	{
+		execute_shell_1();
+	}
 	return (0);
 }

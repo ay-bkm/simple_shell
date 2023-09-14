@@ -2,12 +2,14 @@
 /**
  * _getenviron - search inside environ
  * @name: the name to search
- * Return: the environ or NULL
- */
+ * Return: the environ or NUll
+*/
 char *_getenviron(char *name)
 {
 	char **env = environ;
+
 	int i = 0;
+
 	char *token = NULL;
 
 	while (env[i])
@@ -19,16 +21,17 @@ char *_getenviron(char *name)
 	}
 	return (NULL);
 }
-
 /**
- * get_command - search inside path for the file
+ * get_command - search inside path the file
  * @command: the command
  * Return: command or NULL if failed
- */
+*/
 char *get_command(char *command)
 {
 	char *path = _getenviron("PATH");
+
 	char *full_com;
+
 	char *token;
 
 	token = strtok(path, ":");
@@ -45,4 +48,27 @@ char *get_command(char *command)
 		token = strtok(NULL, ":");
 	}
 	return (NULL);
+}
+/**
+ * split_array - function that parse the buffer
+ * @buffer: the buffer to split
+ * Return: array
+*/
+char **split_array(char *buffer)
+{
+	char **array;
+	char *token;
+	int i = 0;
+
+	array = malloc(sizeof(char *) * 1024);
+	token = strtok(buffer, " \n");
+
+	while (token)
+	{
+		array[i] = token;
+		token = strtok(NULL, " \n");
+		i++;
+	}
+	array[i] = NULL;
+	return (array);
 }

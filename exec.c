@@ -48,7 +48,7 @@ void execute_command(char *args[])
 		{
 			if (execve(args[0], args, environ) == -1)
 			{
-				perror(args[0]);
+				fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
 				exit(127); /* Exit with the same error code as sh */
 			}
 		}
@@ -116,6 +116,7 @@ void execute_env(void)
 	while (env[i])
 	{
 		write(STDOUT_FILENO, env[i], strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
 }

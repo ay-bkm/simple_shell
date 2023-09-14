@@ -8,7 +8,6 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #define MAX_CMD_LEN 1024
 #define MAX_ARG_LEN 256
 extern char **environ;
@@ -25,5 +24,8 @@ void handle_exit_command(void);
 
 char *get_command(char *command);
 char *_getenviron(char *name);
+char **split_array(char *buffer);
+void execute_shell_1(void);
+
 
 #endif /* HEADER_H */
