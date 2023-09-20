@@ -55,43 +55,32 @@ char *_getenviron(const char *name)
 
 char **split_array(char *buffer, int len_buffer)
 {
-    char **array;
-    char *token;
-    int i = 0;
+	char **array;
+	int i = 0, j = 0;
 
-    array = malloc(sizeof(char *) * (len_buffer + 1));
-    if (array == NULL)
-        return (NULL);
+	array = malloc(sizeof(char *) * (len_buffer + 1));
+	if (array == NULL)
+		return (NULL);
 
-    /* Check if the command is empty or consists of only whitespace characters */
-    for (i = 0; buffer[i] != '\0'; i++)
-    {
-        if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\n')
-            break;
-    }
+	array[i] = &buffer[j];
+	while (buffer[j] != '\0')
+	{
+		if (buffer[j] == ' ' || buffer[j] == '\t' || buffer[j] == '\n')
+		{
+			buffer[j] = '\0';
+			i++;
+			array[i] = &buffer[j + 1];
+		}
+		j++;
+	}
 
-    /* If the command is not empty or whitespace-only, tokenize it */
-    if (buffer[i] != '\0')
-    {
-        i = 0;
-        token = strtok(buffer, " \t\n");
-        while (token)
-        {
-            array[i] = malloc(sizeof(char) * (_strlen(token) + 1));
-            _strcpy(array[i], token);
-            token = strtok(NULL, " \t\n");
-            i++;
-        }
-    }
-    else
-    {
-        /* If the command is empty or whitespace-only, skip tokenization */
-        i = 0;
-    }
-
-    array[i] = NULL;
-    return (array);
+	array[i] = NULL;
+	return (array);
 }
+
+
+
+
 
 
 /**
