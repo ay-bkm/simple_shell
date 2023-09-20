@@ -25,9 +25,9 @@ int execute_command(char **args)
 			}
 			else
 			{
-				write(STDERR_FILENO, "./hsh: 1: ", 11);
+				write(STDERR_FILENO, "./hsh:1: ", 10);
 				write(STDERR_FILENO, args[0], strlen(args[0]));
-				write(STDERR_FILENO, ": not found\n", 13);
+				write(STDERR_FILENO, ":not found\n", 12);
 				exit(127);
 			}
 		}
@@ -78,10 +78,10 @@ int shell_interactive(void)
 		}
 		if (contain_all_space) /* Handle the case where the input is only spaces*/
 			continue; /* Skip processing and prompt for the next input*/
-		args = split_array(buffer, strlen(buffer));
-		if (strcmp(args[0], "env") == 0)
+		args = split_array(buffer, _strlen(buffer));
+		if (_strcmp(args[0], "env") == 0)
 			status = print_env();
-		else if (strcmp(args[0], "exit") == 0)
+		else if (_strcmp(args[0], "exit") == 0)
 			free(buffer), handle_exit(args);
 		else
 			status = execute_command(args);
@@ -113,10 +113,10 @@ int shell_non_interaction(void)
 		}
 		if (contain_all_space) /* Handle the case where the input is only spaces*/
 			continue; /* Skip processing and prompt for the next input*/
-		args = split_array(line, strlen(line));
-		if (strcmp(args[0], "exit") == 0)
+		args = split_array(line, _strlen(line));
+		if (_strcmp(args[0], "exit") == 0)
 			handle_exit(args);
-		if (strcmp(args[0], "env") == 0)
+		if (_strcmp(args[0], "env") == 0)
 			status = print_env();
 		else
 			status = execute_command(args);

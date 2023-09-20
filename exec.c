@@ -9,7 +9,7 @@ int print_env(void)
 
 	while (environ[i])
 	{
-		write(STDOUT_FILENO, environ[i], strlen(environ[i]));
+		write(STDOUT_FILENO, environ[i], _strlen(environ[i]));
 		write(1, "\n", 1);
 		i++;
 	}
@@ -23,24 +23,14 @@ int print_env(void)
 char *_getenviron(const char *name)
 {
 	char *token;
-	char *env_variable;
-	char *value;
+	char **env = environ;
 	int i = 0;
 
-	while (environ[i])
+	while (env[i])
 	{
-		env_variable = strdup(environ[i]);
-		if (env_variable == NULL)
-			return (NULL);
-		token = strtok(env_variable, "=");
-		if (token != NULL && (strcmp(name, token) == 0))
-		{
-			token = strtok(NULL, "=");
-			value = strdup(token);
-			free(env_variable);
-			return (value);
-		}
-		free(env_variable);
+		token = strtok(env[i], "=");
+		if (_strcmp(name, token) == 0)
+			return (strtok(NULL, "="));
 		i++;
 	}
 	return (NULL);
@@ -64,8 +54,8 @@ char **split_array(char *buffer, int len_buffer)
 	token = strtok(buffer, " \t\n");
 	while (token)
 	{
-		array[i] = malloc(sizeof(char) * (strlen(token) + 1));
-		strcpy(array[i], token);
+		array[i] = malloc(sizeof(char) * (_strlen(token) + 1));
+		_strcpy(array[i], token);
 		token = strtok(NULL, " \t\n");
 		i++;
 	}
@@ -89,24 +79,21 @@ char *check_path(char *cmd)
 	token = strtok(path, ":");
 	while (token)
 	{
-		full_cmd = malloc(sizeof(char) * (strlen(token) + strlen(cmd) + 2));
+		full_cmd = malloc(sizeof(char) * (_strlen(token) + _strlen(cmd) + 2));
 		if (full_cmd == NULL)
 		{
-			free(path);
 			return (NULL);
 		}
-		strcpy(full_cmd, token);
-		strcat(full_cmd, "/");
-		strcat(full_cmd, cmd);
+		_strcpy(full_cmd, token);
+		_strcat(full_cmd, "/");
+		_strcat(full_cmd, cmd);
 		if (access(full_cmd, F_OK) == 0)
 		{
-			free(path);
 			return (full_cmd);
 		}
 		free(full_cmd);
 		token = strtok(NULL, ":");
 	}
-	free(path);
 	return (NULL);
 }
 /**
