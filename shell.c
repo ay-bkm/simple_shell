@@ -37,11 +37,6 @@ int execute_command(char **args)
 	else
 	{
 		wait(&status);
-		if (WIFEXITED(status))
-		{
-			exit_status = WEXITSTATUS(status);
-			return (exit_status);
-		}
 	}
 	return (0);
 }
