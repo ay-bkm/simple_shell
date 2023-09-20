@@ -2,7 +2,7 @@
 
 ################################################################################
 # Description for the intranet check (one line, support Markdown syntax)
-# Exit with the number `98` as parameter
+# Execute `/bin/ls -l`
 
 ################################################################################
 # The variable 'compare_with_sh' IS OPTIONNAL
@@ -21,7 +21,7 @@
 # as follows: "echo $shell_input | ./hsh"
 #
 # It can be empty and multiline
-shell_input="exit 98"
+shell_input="/bin/ls -l"
 
 ################################################################################
 # The variable 'shell_params' IS OPTIONNAL

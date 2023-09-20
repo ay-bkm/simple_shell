@@ -9,14 +9,14 @@
 int main(int ac, char **av, char **env)
 {
 	int status;
-	int check_interaction;
+	int check_interactive;
 	(void)ac;
 	(void)av;
 	(void)env;
 
-
-	check_interaction = isatty(STDIN_FILENO);
-	if (check_interaction)
+	check_interactive = isatty(STDIN_FILENO);
+	
+	if (check_interactive == 1)
 	{
 		status = shell_interactive();
 	}

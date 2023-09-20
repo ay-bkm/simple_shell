@@ -8,7 +8,8 @@ int execute_command(char **args)
 {
 	pid_t pid;
 	char *command;
-	int status;
+	int status = 0;
+	int exit_status = 0;
 
 	pid = fork();
 	if (pid == 0)
@@ -21,15 +22,15 @@ int execute_command(char **args)
 			if (command)
 			{
 				execve(command, args, environ);
+				free(command);
 			}
 			else
 			{
-				write(STDERR_FILENO, "./hsh:1: ", 10);
+				write(STDERR_FILENO, "./hsh: 1: ", 11);
 				write(STDERR_FILENO, args[0], strlen(args[0]));
-				write(STDERR_FILENO, ":not found\n", 12);
+				write(STDERR_FILENO, ": not found\n", 13);
 				exit(127);
 			}
-			free(command);
 		}
 	}
 	else if (pid < 0)
@@ -39,8 +40,8 @@ int execute_command(char **args)
 		wait(&status);
 		if (WIFEXITED(status))
 		{
-			WEXITSTATUS(status);
-			return (WEXITSTATUS(status));
+			exit_status = WEXITSTATUS(status);
+			return (exit_status);
 		}
 	}
 	return (0);
@@ -55,21 +56,20 @@ int shell_interactive(void)
 	char **args;
 	char *buffer = NULL;
 	size_t buf_size = 0;
-	int n_read, status = 0;
-	int i, contain_all_space;
+	ssize_t n_read;
+	int i, contain_all_space, status = 0;
 
 	while (1)
 	{
 		write(STDOUT_FILENO, "#cisfun$ ", 10);
 		n_read = getline(&buffer, &buf_size, stdin);
-		if (n_read == -1)
+		if (n_read == EOF)
 		{
-			{
-				write(1, "\n", 1), free(buffer);
-				exit(status);
-			}
+			free(buffer);
+			break;
 		}
-		buffer[n_read - 1] = '\0';
+		if (n_read > 0 && buffer[n_read - 1] == '\n')
+			buffer[n_read - 1] = '\0'; /* Remove newline character if it exists */
 		contain_all_space = 1;
 		for (i = 0; i < n_read - 1; i++)
 		{
@@ -78,18 +78,16 @@ int shell_interactive(void)
 		}
 		if (contain_all_space) /* Handle the case where the input is only spaces*/
 			continue; /* Skip processing and prompt for the next input*/
-		args = split_array(buffer, _strlen(buffer));
-		if (_strcmp(args[0], "env") == 0)
+		args = split_array(buffer, strlen(buffer));
+		if (strcmp(args[0], "env") == 0)
 			status = print_env();
-		else if (_strcmp(args[0], "exit") == 0)
+		else if (strcmp(args[0], "exit") == 0)
 			free(buffer), handle_exit(args);
 		else
-			status = execute_command(args);
-		free(buffer);
-		buffer = NULL;
-		free_args(args);
+			status = execute_command(args), free_args(args);
+		free(buffer), buffer = NULL;
 	}
-	return (status);
+	return (status); /* Return status at the end of the loop */
 }
 
 /**
@@ -100,13 +98,14 @@ int shell_interactive(void)
 int shell_non_interaction(void)
 {
 	char *line = NULL;
-	int status = 0, i, n_read;
+	int status, i, n_read;
 	int contain_all_space;
 	size_t size = 0;
 	char **args = NULL;
 
 	while ((n_read = getline(&line, &size, stdin)) > 0)
 	{
+
 		contain_all_space = 1;
 		for (i = 0; i < n_read - 1; i++)
 		{
@@ -115,13 +114,15 @@ int shell_non_interaction(void)
 		}
 		if (contain_all_space) /* Handle the case where the input is only spaces*/
 			continue; /* Skip processing and prompt for the next input*/
-		args = split_array(line, _strlen(line));
-		if (_strcmp(args[0], "exit") == 0)
+		args = split_array(line, strlen(line));
+		if (strcmp(args[0], "exit") == 0)
 			handle_exit(args);
-		if (_strcmp(args[0], "env") == 0)
+		if (strcmp(args[0], "env") == 0)
 			status = print_env();
 		else
-			status = execute_command(args);
+			status = execute_command(args), free_args(args);
+		free(line);
+		line = NULL;
 	}
 	return (status);
 }
