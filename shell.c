@@ -69,9 +69,9 @@ int shell_interactive(void)
 		if (is_empty)
 			continue;
 		args = split_array(buf, n);
-		if (strcmp(args[0], "env") == 0)
+		if (_strcmp(args[0], "env") == 0)
 			status = print_env();
-		else if (strcmp(args[0], "exit") == 0)
+		else if (_strcmp(args[0], "exit") == 0)
 			free(buf), handle_exit(args);
 		else
 		{
@@ -103,12 +103,12 @@ int shell_non_interaction(void)
 	while (getline(&line, &size, stdin) > 0)
 	{
 		/* Split the input into arguments */
-		args = split_array(line, strlen(line));
+		args = split_array(line, _strlen(line));
 
 		/* Check for built-in commands or execute external commands */
-		if (strcmp(args[0], "exit") == 0)
+		if (_strcmp(args[0], "exit") == 0)
 			handle_exit(args);
-		if (strcmp(args[0], "env") == 0)
+		if (_strcmp(args[0], "env") == 0)
 			status = print_env();
 		else
 		{
