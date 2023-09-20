@@ -9,9 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <ctype.h>
-#include <stdbool.h>
 
-#define BUFFER_SIZE 1024
 extern char **environ;
 
 int print_env(void);
@@ -23,15 +21,13 @@ int execute_command(char **args);
 int shell_non_interaction(void);
 int shell_interactive(void);
 void free_args(char **args);
+
 int _strlen(const char *s);
 char *_strchr(char *s, char c);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, const char *src);
-int _strcmp(const char *s1, const char *s2);
 char *_strdup(const char *src);
-bool _isspace(int x);
-
-
+int _strcmp(const char *s1, const char *s2);
 
 
 #endif

@@ -9,7 +9,7 @@ int print_env(void)
 
 	while (environ[i])
 	{
-		write(STDOUT_FILENO, environ[i], _strlen(environ[i]));
+		write(STDOUT_FILENO, environ[i], strlen(environ[i]));
 		write(1, "\n", 1);
 		i++;
 	}
@@ -29,14 +29,14 @@ char *_getenviron(const char *name)
 
 	while (environ[i])
 	{
-		env_variable = _strdup(environ[i]);
+		env_variable = strdup(environ[i]);
 		if (env_variable == NULL)
 			return (NULL);
 		token = strtok(env_variable, "=");
-		if (token != NULL && (_strcmp(name, token) == 0))
+		if (token != NULL && (strcmp(name, token) == 0))
 		{
 			token = strtok(NULL, "=");
-			value = _strdup(token);
+			value = strdup(token);
 			free(env_variable);
 			return (value);
 		}
@@ -52,37 +52,26 @@ char *_getenviron(const char *name)
  * @len_buffer: len of the buffer
  * Return: array
 */
-
 char **split_array(char *buffer, int len_buffer)
 {
 	char **array;
-	int i = 0, j = 0;
+	char *token;
+	int i = 0;
 
 	array = malloc(sizeof(char *) * (len_buffer + 1));
 	if (array == NULL)
 		return (NULL);
-
-	array[i] = &buffer[j];
-	while (buffer[j] != '\0')
+	token = strtok(buffer, " \t\n");
+	while (token)
 	{
-		if (buffer[j] == ' ' || buffer[j] == '\t' || buffer[j] == '\n')
-		{
-			buffer[j] = '\0';
-			i++;
-			array[i] = &buffer[j + 1];
-		}
-		j++;
+		array[i] = malloc(sizeof(char) * (strlen(token) + 1));
+		strcpy(array[i], token);
+		token = strtok(NULL, " \t\n");
+		i++;
 	}
-
 	array[i] = NULL;
 	return (array);
 }
-
-
-
-
-
-
 /**
  * check_path - function that check the cmd
  * if it exit in the path
@@ -100,15 +89,15 @@ char *check_path(char *cmd)
 	token = strtok(path, ":");
 	while (token)
 	{
-		full_cmd = malloc(sizeof(char) * (_strlen(token) + _strlen(cmd) + 2));
+		full_cmd = malloc(sizeof(char) * (strlen(token) + strlen(cmd) + 2));
 		if (full_cmd == NULL)
 		{
 			free(path);
 			return (NULL);
 		}
-		_strcpy(full_cmd, token);
-		_strcat(full_cmd, "/");
-		_strcat(full_cmd, cmd);
+		strcpy(full_cmd, token);
+		strcat(full_cmd, "/");
+		strcat(full_cmd, cmd);
 		if (access(full_cmd, F_OK) == 0)
 		{
 			free(path);
