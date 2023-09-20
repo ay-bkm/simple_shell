@@ -9,6 +9,7 @@ int execute_command(char **args)
 	pid_t pid;
 	char *command;
 	int status;
+	int exit_status;
 
 	pid = fork();
 	if (pid == 0)
@@ -36,6 +37,11 @@ int execute_command(char **args)
 	else
 	{
 		wait(&status);
+		if (WIFEXITED(status))
+		{
+			exit_status = WEXITSTATUS(status);
+			return (exit_status);
+		}
 	}
 	return (0);
 }
@@ -80,6 +86,8 @@ int shell_interactive(void)
 		else
 			status = execute_command(args);
 		free_args(args);
+		free(buffer);
+		buffer = NULL;
 	}
 	return (status);
 }

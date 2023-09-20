@@ -82,6 +82,7 @@ char *check_path(char *cmd)
 		full_cmd = malloc(sizeof(char) * (_strlen(token) + _strlen(cmd) + 2));
 		if (full_cmd == NULL)
 		{
+
 			return (NULL);
 		}
 		_strcpy(full_cmd, token);
