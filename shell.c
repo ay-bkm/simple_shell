@@ -55,7 +55,7 @@ int shell_interactive(void)
 	char **args;
 	char *buffer = NULL;
 	size_t buf_size = 0;
-	int n_read, status;
+	int n_read, status = 0;
 	int i, contain_all_space;
 
 	while (1)
@@ -85,9 +85,9 @@ int shell_interactive(void)
 			free(buffer), handle_exit(args);
 		else
 			status = execute_command(args);
-		free_args(args);
 		free(buffer);
 		buffer = NULL;
+		free_args(args);
 	}
 	return (status);
 }
@@ -122,6 +122,8 @@ int shell_non_interaction(void)
 			status = print_env();
 		else
 			status = execute_command(args);
+		free(line);
+		line = NULL;
 	}
 	return (status);
 }
