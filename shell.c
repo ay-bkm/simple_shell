@@ -100,7 +100,7 @@ int shell_interactive(void)
 int shell_non_interaction(void)
 {
 	char *line = NULL;
-	int status, i, n_read;
+	int status = 0, i, n_read;
 	int contain_all_space;
 	size_t size = 0;
 	char **args = NULL;
@@ -122,8 +122,6 @@ int shell_non_interaction(void)
 			status = print_env();
 		else
 			status = execute_command(args);
-		free(line);
-		line = NULL;
 	}
 	return (status);
 }
