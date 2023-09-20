@@ -1,124 +1,124 @@
 #include "header.h"
+
 /**
-* print_env - function that print environ
-* Return: 0
-*/
-int print_env(void)
+ * parse_user_input - Parse user input into arguments.
+ *
+ * @input: The user input string.
+ * @args: The array to store parsed arguments.
+ * @max_args: The maximum number of arguments.
+ *
+ * Return: 1 if successful, 0 on failure.
+ */
+int parse_user_input(const char *input, char **args, int max_args)
 {
+	char *token = strtok((char *)input, " ");
 	int i = 0;
 
-	while (environ[i])
+	while (token != NULL && i < max_args - 1)
 	{
-		write(STDOUT_FILENO, environ[i], strlen(environ[i]));
-		write(1, "\n", 1);
-		i++;
+		args[i++] = token;
+		token = strtok(NULL, " ");
 	}
-	return (0);
-}
-/**
- * _getenviron - function that get the environ
- * @name: name to search
- * Return: char (the environ) or NULL if it fail
-*/
-char *_getenviron(const char *name)
-{
-	char *token;
-	int i = 0;
 
-	while (environ[i])
+	args[i] = NULL;
+
+	return (1);
+}
+
+/**
+ * execute_command - Execute a command with its arguments.
+ *
+ * @args: Array of command arguments, where the first element is the command.
+ */
+void execute_command(char *args[])
+{
+	pid_t pid;
+	int status;
+	char *command;
+
+	pid = fork();
+	if (pid == 0)
 	{
-		token = strtok(environ[i], "=");
-		if (token != NULL && (strcmp(name, token) == 0))
+		command = get_command(args[0]);
+		if (command)
 		{
-			return (strtok(NULL, "="));
+			execve(command, args, environ);
 		}
-		i++;
-	}
-	return (NULL);
-}
-/**
- * split_array - function that split command
- * into token with delimiter (space)
- * @buffer: the buffer
- * @len_buffer: len of the buffer
- * Return: array
-*/
-char **split_array(char *buffer, int len_buffer)
-{
-	char **array;
-	char *token;
-	int i = 0;
-	int j;
-
-	array = malloc(sizeof(char *) * (len_buffer + 1));
-	if (array == NULL)
-		return (NULL);
-	token = strtok(buffer, " \t\n");
-	while (token)
-	{
-		array[i] = malloc(sizeof(char) * (strlen(token) + 1));
-		if (array[i] == NULL)
+		else
 		{
-			for (j = 0; j < i; j++)
+			if (execve(args[0], args, environ) == -1)
 			{
-				free(array[j]);
+				fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+				exit(127); /* Exit with the same error code as sh */
 			}
-			free(array);
-			return (NULL);
 		}
-		strcpy(array[i], token);
-		token = strtok(NULL, " \t\n");
-		i++;
 	}
-	array[i] = NULL;
-	return (array);
-}
-/**
- * check_path - function that check the cmd
- * if it exit in the path
- * @cmd: cmd enter by the user
- * Return: the cmd or null
-*/
-char *check_path(char *cmd)
-{
-	char *path = _getenviron("PATH");
-	char *token;
-	char *full_cmd;
-
-	if (path == NULL || cmd == NULL)
-		return (NULL);
-	token = strtok(path, ":");
-	while (token)
+	else if (pid > 0)
 	{
-		full_cmd = malloc(sizeof(char) * (strlen(token) + strlen(cmd) + 2));
-		if (full_cmd == NULL)
-		{
-			return (NULL);
-		}
-		strcpy(full_cmd, token);
-		strcat(full_cmd, "/");
-		strcat(full_cmd, cmd);
-		if (access(full_cmd, F_OK) == 0)
-			return (full_cmd);
-		free(full_cmd);
-		token = strtok(NULL, ":");
+		wait(&status);
 	}
-	return (NULL);
+	else
+	{
+		perror("fork failed");
+		exit(1); /* Exit with an error code */
+	}
 }
+
 /**
- * handle_exit - function that free before exit
- * @arrays: the array
-*/
-void handle_exit(char **arrays)
+ * execute_shell - Execute the interactive shell.
+ */
+void execute_shell(void)
 {
+	char *cmd = NULL;
+	char *args[MAX_ARG_LEN];
+
+	while (1)
+	{
+		write(STDOUT_FILENO, "#cisfun$ ", 10);
+		if (!get_user_input(&cmd))
+		{
+			handle_get_user_input_error();
+			continue;
+		}
+
+		if (!parse_user_input(cmd, args, MAX_ARG_LEN))
+		{
+			handle_parse_user_input_error();
+			continue;
+		}
+
+		if (args[0] == NULL)
+			continue;
+
+		if (strcmp(args[0], "exit") == 0)
+		{
+			handle_exit_command();
+		}
+		else if (strcmp(args[0], "env") == 0)
+		{
+			execute_env();
+		}
+		else
+		{
+			execute_command(args);
+		}
+		free(cmd);
+		cmd = NULL;
+	}
+}
+
+/**
+ * execute_env - Execute the "env" built-in command.
+ */
+void execute_env(void)
+{
+	char **env = environ;
 	int i = 0;
 
-	while (arrays[i])
+	while (env[i])
 	{
-		free(arrays[i]);
+		write(STDOUT_FILENO, env[i], strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
-	free(arrays);
-	exit(0);
 }
-
