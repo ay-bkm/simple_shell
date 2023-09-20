@@ -9,7 +9,6 @@ int execute_command(char **args)
 	pid_t pid;
 	char *command;
 	int status;
-	int exit_status;
 
 	pid = fork();
 	if (pid == 0)
