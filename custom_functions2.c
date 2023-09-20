@@ -27,7 +27,7 @@ char *_strdup(const char *src)
  * @s2: second string
  * Return: int (0 if strings are equal, non-zero if strings are not equal)
  */
-int _strcmp(char *s1, char *s2)
+int _strcmp(const char *s1, const char *s2)
 {
 	while (*s1 != '\0' && *s2 != '\0')
 	{

@@ -28,7 +28,7 @@ if (command)
 	execve(command, args, environ);
 else
 {
-strchr(args[0], '|') != NULL ?
+_strchr(args[0], '|') != NULL ?
 (fprintf(stderr, "./hsh: 1: %s: invalid use of pipe\n", args[0]), exit(127)) :
 (fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]), exit(127));
 }
