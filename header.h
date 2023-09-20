@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE 1024
 extern char **environ;
@@ -28,6 +29,7 @@ char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, const char *src);
 int _strcmp(const char *s1, const char *s2);
 char *_strdup(const char *src);
+bool _isspace(int x);
 
 
 

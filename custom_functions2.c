@@ -40,3 +40,12 @@ int _strcmp(const char *s1, const char *s2)
 	return (*s1 - *s2);
 }
 
+/**
+ * _isspace - a function which checks if whitespace
+ * @x: the character
+ * Return: if whitespace (1), if not (0)
+ */
+bool _isspace(int x)
+{
+	return (x == ' ' || (x >= 0x09 && x <= 0x0d));
+}

@@ -12,7 +12,7 @@ char *command;
 int status, i, exit_status;
 
 for (i = 0; args[i] != NULL; i++)
-	if (args[i][0] != '\0' && !isspace(args[i][0]))
+	if (args[i][0] != '\0' && !_isspace(args[i][0]))
 		break;
 if (args[i] == NULL)
 	return (0); /* Return 0 for empty or whitespace-only commands */
